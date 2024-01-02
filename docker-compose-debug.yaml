@@ -3,15 +3,11 @@ version: '3.5'
 services:
   app:
     hostname: grpc-server
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
       - "6565:6565"
       - "8080:8080"
       - "5006:5006"
-    extra_hosts:
-      - host.docker.internal:host-gateway
     environment:
       - AB_BASE_URL=${AB_BASE_URL}
       - AB_CLIENT_ID=${AB_CLIENT_ID}
@@ -21,10 +17,12 @@ services:
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://host.docker.internal:9411/api/v2/spans
       - OTEL_TRACES_EXPORTER=zipkin
       - OTEL_METRICS_EXPORTER=none
-      - OTEL_SERVICE_NAME=ExtendEventHandlerJavaServerDocker
+      - OTEL_SERVICE_NAME=ExtendEventHandlerServerJava
       - OTEL_PROPAGATORS=b3multi
       - ITEM_ID_TO_GRANT=${ITEM_ID_TO_GRANT}
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    extra_hosts:
+      - host.docker.internal:host-gateway
     logging:
       driver: loki
       options:
