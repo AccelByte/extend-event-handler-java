@@ -7,7 +7,6 @@
 build/
 target/
 tempo-data/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 gradle.properties
@@ -82,6 +81,14 @@ Thumbs.db
 /nbdist/
 /.nb-gradle/
 
-### Other exclussion
+# Jar files
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+!jars/*.jar
+
+# Env files
 .env*
+!.env.template
+
+# Others
 .run
