@@ -2,13 +2,10 @@ plugin:
   grpc:
     config:
       namespace: ${AB_NAMESPACE:accelbyte}
-      resource_name: 'PLRGRPCSERVICE'
     server:
       interceptor:
         debug-logger:
           enabled: false
-        auth:
-          enabled: ${PLUGIN_GRPC_SERVER_AUTH_ENABLED:true}
 
 app:
   config:

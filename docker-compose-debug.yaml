@@ -14,7 +14,6 @@ services:
       - AB_CLIENT_SECRET=${AB_CLIENT_SECRET}
       - AB_NAMESPACE=${AB_NAMESPACE}
       - ITEM_ID_TO_GRANT=${ITEM_ID_TO_GRANT}
-      - PLUGIN_GRPC_SERVER_AUTH_ENABLED
       - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://host.docker.internal:9411/api/v2/spans
       - OTEL_TRACES_EXPORTER=zipkin
       - OTEL_METRICS_EXPORTER=none
