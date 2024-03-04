@@ -46,17 +46,14 @@ flow properly when the app is deployed.
 │   │   │           │   ├── ExceptionServerInterceptor.java
 │   │   │           │   └── GrpcServerCallMeterFilter.java
 │   │   │           └── service
-│   │   │               ├── LoginHandler.java   # Where we put custom logic that will get called when the event 
-│   │   │               ...
-│   │   │               ├── LoginHandler.java   # Where we put custom logic that will get called when the event 
-                                                # we interested got invoked
-                        ...
+│   │   │               ├── LoginHandler.java   # Where we put custom logic that will get called when the event
+                                                # we interested got invoked 
+                        ...                     
 ...
 ```
 
 The `AGS` event specification can be obtained [here](https://github.com/AccelByte/accelbyte-api-proto/tree/main/asyncapi/accelbyte). In this case,
 we are only interested on `user logged in event`. Therefore, we only put the event specification for IAM in this sample app.
-
 
 ## Prerequisites
 
