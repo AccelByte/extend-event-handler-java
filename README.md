@@ -7,27 +7,34 @@ flowchart LR
    KB[Kafka Connect]  
    subgraph Extend Event Handler App
 
-   SV["gRPC Server\n(YOU ARE HERE)"]   
+   SV["gRPC Server\n(you are here)"]   
    end   
    KB --- SV
    KF --- KB
    end   
 ```
 
-`AccelByte Gaming Services (AGS)` features can be extended by using 
-`Extend Event Handler` apps. An `Extend Event Handler` is a gRPC server which
-listen to Kafka events from `AGS` services via Kafka Connect and takes actions
+`AccelByte Gaming Services` (AGS) capabilities can be extended with 
+`Extend Event Handler` apps. An `Extend Event Handler` app is a gRPC server 
+which listens to Kafka events from AGS via Kafka Connect and takes actions
 according to a custom logic.
 
 ## Overview
 
-This repository contains a sample `Extend Event Handler` app written in `Java`. 
-It will listen to `userLoggedIn` event and then proceed to grant an entitlement 
-to the said user. 
+This repository serves as a template project for an `Extend Event Handler` 
+app written in `Java`. You can clone this repository and start creating custom 
+event handler by including the relevant AGS event specification and 
+implementing your own logic to handle AGS Kafka events.
 
-This sample app also shows the instrumentation setup necessary for 
-observability. It is required so that metrics, traces, and logs are able to 
-flow properly when the app is deployed.
+By using this repository as a template project, you will get some 
+instrumentation for observability out-of-the-box so that metrics, traces, and 
+logs will be available when the app is deployed. Since the source code is 
+included, you can customize them according to your needs.
+
+As an example to get you started, this template project contains a sample
+event handler which will listen to `userLoggedIn` event from AGS and then 
+proceed to grant an entitlement 
+to the said user.
 
 ## Project Structure
 
@@ -52,8 +59,9 @@ flow properly when the app is deployed.
 ...
 ```
 
-The `AGS` event specification can be obtained [here](https://github.com/AccelByte/accelbyte-api-proto/tree/main/asyncapi/accelbyte). In this case,
-we are only interested on `user logged in event`. Therefore, we only put the event specification for IAM in this sample app.
+The AGS event specification can be obtained [here](https://github.com/AccelByte/accelbyte-api-proto/tree/main/asyncapi/accelbyte). 
+For the sample event handler, we are only interested in `userLoggedIn` event. 
+Therefore, we only include the AGS event specification for IAM.
 
 ## Prerequisites
 
@@ -93,15 +101,27 @@ Before starting, you will need the following.
 
 ## Setup
 
-1. Create a docker compose `.env` file by copying the content of [.env.template](.env.template) file.
+To be able to run the sample event handler, you will need to follow these setup 
+steps.
+
+1. Create a docker compose `.env` file by copying the content of 
+   [.env.template](.env.template) file.
+
+   > :warning: **The host OS environment variables have higher precedence 
+   compared to `.env` file variables**: If the variables in `.env` file do not 
+   seem to take effect properly, check if there are host OS environment 
+   variables with the same name.  See documentation about 
+   [docker compose environment variables precedence](https://docs.docker.com/compose/environment-variables/envvars-precedence/) 
+   for more details.
+
 2. Fill in the required environment variables in `.env` file as shown below.
 
    ```
-   AB_BASE_URL=https://demo.accelbyte.io      # Base URL of AccelByte Gaming Services demo environment
-   AB_CLIENT_ID='xxxxxxxxxx'                  # Use Client ID from the Prerequisites section
-   AB_CLIENT_SECRET='xxxxxxxxxx'              # Use Client Secret from the Prerequisites section
-   AB_NAMESPACE='xxxxxxxxxx'                  # Use Namespace ID from the Prerequisites section
-   ITEM_ID_TO_GRANT='xxxxxxxxxxx'             # Item id from a published store we noted previously
+   AB_BASE_URL=https://demo.accelbyte.io     # Base URL of AccelByte Gaming Services demo environment
+   AB_CLIENT_ID='xxxxxxxxxx'                 # Client ID from the Prerequisites section
+   AB_CLIENT_SECRET='xxxxxxxxxx'             # Client Secret from the Prerequisites section
+   AB_NAMESPACE='xxxxxxxxxx'                 # Namespace ID from the Prerequisites section
+   ITEM_ID_TO_GRANT='xxxxxxxxxx'             # Item id from a published store we noted previously
    ```
 
 ## Building
@@ -124,7 +144,7 @@ docker compose up --build
 
 ### Test in Local Development Environment
 
-The custom function in this sample app can be tested locally using [grpcui](https://github.com/fullstorydev/grpcui).
+The sample event handler can be tested locally using [grpcui](https://github.com/fullstorydev/grpcui).
 
 1. Run this `Extend Event Handler` sample app by using the command below.
 
@@ -226,18 +246,42 @@ will be accessible at http://localhost:3000.
 
 ## Deploying
 
-After done testing, you may want to deploy this app to `AccelByte Gaming Services`.
+To deploy this app to AGS, follow the steps below.
 
 1. [Create a new Extend Event Handler app on Admin Portal](https://docs.accelbyte.io/gaming-services/services/extend/events-handler/). Keep the `Repository URI`.
-2. Download and setup [extend-helper-cli](https://github.com/AccelByte/extend-helper-cli/) (only if it has not been done previously).
+
+2. Download and setup [extend-helper-cli](https://github.com/AccelByte/extend-helper-cli/)   (only if it has not been done previously).
+
 3. Perform docker login with `extend-helper-cli` using the following command.
    ```
    extend-helper-cli dockerlogin --namespace <my-game> --app <my-app> --login
    ```
-   > :exclamation: For your convenience, the above `extend-helper-cli` command can also be 
-   copied from `Repository Authentication Command` under the corresponding app detail page.
+   > :exclamation: For your convenience, the above `extend-helper-cli` command 
+   can also be copied from `Repository Authentication Command` under the 
+   corresponding app detail page.
+
 4. Build and push sample app docker image to AccelByte ECR using the following command.
    ```
    make imagex_push IMAGE_TAG=v0.0.1 REPO_URL=xxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/accelbyte/justice/development/extend/xxxxxxxxxx/xxxxxxxxxx
    ```
-   > :exclamation: **The REPO_URL is obtained from step 1**: It can be found under 'Repository URI' in the app detail.
+   > :exclamation: **The REPO_URL is obtained from step 1**: It can be found 
+   under 'Repository URI' in the app detail.
+
+5. Open Admin Portal, go to **Extend** -> **Event Handler**. And then select 
+   the extend app.
+
+6. To deploy selected image tag, click **Image Version History** and select 
+   desired image tag to be deployed.
+
+7. Click **Deploy Image**, confirm the deployment and go back to App Detail by 
+   clicking **Cancel**.
+
+8. Wait until app status is running.
+
+For more information on how to deploy an `Extend Event Handler` app, see 
+[here](https://docs.accelbyte.io/gaming-services/services/extend/events-handler/getting-started-event-handler/#build-and-upload-the-extend-app).
+
+# Next Step
+
+Proceed to modify this template project and create your custom event handler. 
+See [here](https://docs.accelbyte.io/gaming-services/services/extend/events-handler/working-with-protobuf-event-descriptor/) for more details.
