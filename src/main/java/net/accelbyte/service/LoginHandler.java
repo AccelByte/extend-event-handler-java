@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.accelbyte.iam.account.UserAuthenticationUserLoggedInServiceGrpc;
 import net.accelbyte.iam.account.UserLoggedIn;
 import net.accelbyte.sdk.api.platform.models.EntitlementGrant;
-import net.accelbyte.sdk.api.platform.operations.entitlement.GrantUserEntitlement;
-import net.accelbyte.sdk.api.platform.wrappers.Entitlement;
+import net.accelbyte.sdk.api.platform.models.FulfillmentRequest;
+import net.accelbyte.sdk.api.platform.models.FulfillmentResult;
+import net.accelbyte.sdk.api.platform.operations.fulfillment.FulfillItem;
+import net.accelbyte.sdk.api.platform.wrappers.Fulfillment;
 import net.accelbyte.sdk.core.AccelByteSDK;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ import java.util.List;
 public class LoginHandler extends UserAuthenticationUserLoggedInServiceGrpc.UserAuthenticationUserLoggedInServiceImplBase {
     private final String namespace;
     private final String itemIdToGrant;
-    private final Entitlement entitlement;
+    private final Fulfillment fulfillment;
 
     @Autowired
     public LoginHandler(
@@ -30,7 +32,7 @@ public class LoginHandler extends UserAuthenticationUserLoggedInServiceGrpc.User
         @Value("${app.config.item_id_to_grant}") String itemIdToGrant,
         AccelByteSDK sdk
     ) {
-        this.entitlement = new Entitlement(sdk);
+        this.fulfillment = new Fulfillment(sdk);
         this.namespace = namespace;
         this.itemIdToGrant = itemIdToGrant;
         log.info("LoginHandler initialized");
@@ -44,22 +46,28 @@ public class LoginHandler extends UserAuthenticationUserLoggedInServiceGrpc.User
     }
 
     private void grantEntitlement(String userId, String itemId) {
+        FulfillmentResult fulfillmentResult;
         try {
-            EntitlementGrant grant = EntitlementGrant.builder()
+            FulfillmentRequest body = FulfillmentRequest.builder()
                     .itemId(itemId)
-                    .itemNamespace(namespace)
                     .quantity(1)
                     .source(EntitlementGrant.Source.REWARD.name())
                     .build();
-            GrantUserEntitlement grantEntitlementParam = GrantUserEntitlement.builder()
+            FulfillItem fulfillItemParam = FulfillItem.builder()
                     .namespace(namespace)
                     .userId(userId)
-                    .body(List.of(grant))
+                    .body(body)
                     .build();
-            entitlement.grantUserEntitlement(grantEntitlementParam);
+            fulfillmentResult = fulfillment.fulfillItem(fulfillItemParam);
         } catch (Exception e) {
             String reason = String.format("could not grant item to user, because: '%s'", e.getMessage());
             throw new ServerErrorException(reason, e);
+        }
+
+        if (fulfillmentResult != null) {
+            for (var entitlementItem : fulfillmentResult.getEntitlementSummaries()) {
+                log.info("entitlementId: {}", entitlementItem.getId());
+            }
         }
     }
 
