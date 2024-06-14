@@ -1,5 +1,15 @@
-FROM --platform=$BUILDPLATFORM alpine:3.19.1
+FROM debian:12
 WORKDIR /workspace
-RUN apk --no-cache add bash curl docker-cli-buildx git jq make gradle gcompat \
-        && apk add --update-cache --upgrade curl \
-        && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing grpcurl
+RUN apt update \
+        && apt install -y bash curl git jq make openjdk-17-jdk-headless xxd \
+        && apt clean \
+        && rm -rf /var/lib/apt/lists/*
+RUN ARCH=$(uname -m | sed -e s/aarch64/arm64/) \
+        && curl -sSL "https://github.com/fullstorydev/grpcurl/releases/download/v1.8.9/grpcurl_1.8.9_linux_$ARCH.tar.gz" | tar -xz -C /usr/local/bin
+RUN ARCH=$(uname -m | sed -e s/x86_64/amd64/ -e s/aarch64/arm64/) \
+        && curl "https://download.docker.com/linux/debian/dists/bookworm/pool/stable/$ARCH/docker-ce-cli_23.0.6-1~debian.12~bookworm_$ARCH.deb" -o /tmp/docker-ce-cli.deb \
+        && curl "https://download.docker.com/linux/debian/dists/bookworm/pool/stable/$ARCH/docker-buildx-plugin_0.11.2-1~debian.12~bookworm_$ARCH.deb" -o /tmp/docker-buildx-plugin.deb \
+        && cat /tmp/docker-ce-cli.deb \
+        && dpkg -i /tmp/docker-ce-cli.deb /tmp/docker-buildx-plugin.deb \
+        && rm -f /tmp/docker-ce-cli.deb /tmp/docker-buildx-plugin.deb
+COPY --from=ngrok/ngrok:latest /bin/ngrok /bin/ngrok
