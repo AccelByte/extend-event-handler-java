@@ -61,6 +61,7 @@ test_sample_local_hosted:
 			test/sample
 	docker run --rm -t \
 			-u $$(id -u):$$(id -g) \
+			-e GRADLE_USER_HOME=.gradle \
 			-e GOCACHE=/data/.cache/go-build \
 			-e GOPATH=/data/.cache/mod \
 			--env-file $(ENV_PATH) \
@@ -80,6 +81,7 @@ endif
 			-f test/sample/Dockerfile \
 			test/sample
 	docker run --rm -t \
+			-e GRADLE_USER_HOME=.gradle \
 			-e GOCACHE=/data/.cache/go-build \
 			-e GOPATH=/data/.cache/mod \
 			-e DOCKER_CONFIG=/tmp/.docker \
