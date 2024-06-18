@@ -67,7 +67,7 @@ Therefore, we only include the AGS event specification for IAM.
 
 Before starting, you will need the following.
 
-1. Windows 11 WSL2 or Linux Ubuntu 22.04 with the following installed.
+1. Windows 11 WSL2 or Linux Ubuntu 22.04 or macOS 14+ with the following tools installed.
 
    a. Bash
 
@@ -126,6 +126,8 @@ Before starting, you will need the following.
       grpcui v1.4.1
       ```
 
+
+   > :exclamation: In macOS, you may use [Homebrew](https://brew.sh/) to easily install some of the tools above.
 
 2. Access to `AccelByte Gaming Services` demo environment.
 
