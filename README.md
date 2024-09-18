@@ -13,10 +13,9 @@ flowchart LR
    end   
 ```
 
-
 `AccelByte Gaming Services` (AGS) capabilities can be enhanced using 
-`Extend Event Handler` apps. An `Extend Event Handler` app is a gRPC server that 
-receives AGS events through `Kafka Connect` and performs actions based on 
+`Extend Event Handler` apps. An `Extend Event Handler` app is a `gRPC server` 
+that receives AGS events through `Kafka Connect` and performs actions based on 
 custom logic.
 
 ## Overview
