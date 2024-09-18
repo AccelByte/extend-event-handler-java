@@ -4,15 +4,15 @@
 flowchart LR
    subgraph AccelByte Gaming Services
    KF[Kafka]
-   KB[Kafka Connect]  
+   KB[Kafka Connect]
+   end
    subgraph Extend Event Handler App
-
-   SV["gRPC Server\n(you are here)"]   
-   end   
+   SV["gRPC Server"]   
    KB --- SV
    KF --- KB
    end   
 ```
+
 
 `AccelByte Gaming Services` (AGS) capabilities can be enhanced using 
 `Extend Event Handler` apps. An `Extend Event Handler` app is a gRPC server that 
