@@ -4,6 +4,7 @@ services:
     ports:
       - "6565:6565"
       - "8080:8080"
+    #  - "5006:5005"
     environment:
       - AB_BASE_URL=${AB_BASE_URL}
       - AB_CLIENT_ID=${AB_CLIENT_ID}
@@ -15,6 +16,7 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SERVICE_NAME=ExtendEventHandlerServerJava
       - OTEL_PROPAGATORS=b3multi
+    #  - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     extra_hosts:
       - host.docker.internal:host-gateway
     # logging:
