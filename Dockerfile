@@ -10,12 +10,12 @@ RUN sh gradlew dependencies -i
 COPY . .
 RUN sh gradlew build -i
 
-# Extend Event Handler app
+# Extend Override app
 
 FROM amazoncorretto:17-alpine3.21
 WORKDIR /app
 COPY jars/aws-opentelemetry-agent.jar aws-opentelemetry-agent.jar
 COPY --from=builder /build/target/*.jar app.jar
-# gRPC server port and /metrics HTTP port
+# gRPC server port and and /metrics HTTP port
 EXPOSE 6565 8080
-CMD [ "java", "-javaagent:aws-opentelemetry-agent.jar", "-jar", "app.jar" ]
+ENTRYPOINT exec java -javaagent:aws-opentelemetry-agent.jar $JAVA_OPTS -jar app.jar
