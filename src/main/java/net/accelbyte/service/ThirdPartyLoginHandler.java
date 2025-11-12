@@ -9,8 +9,6 @@ import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
-
 @Slf4j
 @GRpcService
 public class ThirdPartyLoginHandler extends UserAuthenticationUserThirdPartyLoggedInServiceGrpc.UserAuthenticationUserThirdPartyLoggedInServiceImplBase {
@@ -25,13 +23,6 @@ public class ThirdPartyLoginHandler extends UserAuthenticationUserThirdPartyLogg
         this.itemIdToGrant = itemIdToGrant;
         this.entitlementService = entitlementService;
         log.info("ThirdPartyLoginHandler initialized");
-    }
-
-    @PostConstruct
-    public void validate() {
-        if (itemIdToGrant == null || itemIdToGrant.isEmpty()) {
-            throw new IllegalArgumentException("Required envar ITEM_ID_TO_GRANT is not configured");
-        }
     }
 
     @Override
