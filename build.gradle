@@ -39,8 +39,13 @@ bootRun {
 	if ( project.hasProperty('jvmArgs') ) {
 		jvmArgs = (project.jvmArgs.split("\\s+") as List)
 	} else {
+		def envName = System.getenv('OTEL_SERVICE_NAME')
+		def serviceName = envName 
+			? "extend-app-eh-${envName.trim().toLowerCase()}" 
+			: 'extend-app-event-handler'
+
 		jvmArgs = ['-javaagent:jars/aws-opentelemetry-agent.jar',
-				   '-Dotel.service.name=ExtendEventHandlerGoServerDocker',
+				   "-Dotel.service.name=${serviceName}",
 		           '-Dotel.propagators=b3multi',
 				   '-Dotel.metrics.exporter=none',
 				   '-Dotel.traces.exporter=zipkin',
